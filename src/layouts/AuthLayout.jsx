@@ -13,7 +13,7 @@ const AuthLayout = ({ children }) => {
           </main>
           <div className="mt-10 text-gray-100 text-center text-sm">
             <p className="font-bold">v1.0.0</p>
-            <p>Sijupri &copy; 2023</p>
+            <p>Sijuta &copy; 2023</p>
           </div>
         </div>
       </div>

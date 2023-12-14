@@ -24,6 +24,8 @@ import KKN from './pages/Admin/KKN';
 import KKNCreate from './pages/Admin/KKNCreate';
 import KKNDetail from './pages/Admin/KKNDetail';
 import Master from './pages/Admin/Master';
+import MasterCreate from './pages/Admin/MasterCreate';
+import MasterDetail from './pages/Admin/MasterDetail';
 
 const App = () => {
 
@@ -55,6 +57,8 @@ const App = () => {
       <Route element={<PrivateRoutes role="ADMINISTRATOR" />}>
         <Route path="/administrator/dashboard" element={<AdminDashboard />} />
         <Route path="/administrator/master" element={<Master />} />
+        <Route path="/administrator/master/create" element={<MasterCreate />} />
+        <Route path="/administrator/master/:role/:uuid" element={<MasterDetail />} />
         <Route path="/administrator/magang" element={<Magang />} />
         <Route path="/administrator/magang/create" element={<MagangCreate />} />
         <Route path="/administrator/magang/:fieldworkId" element={<MagangDetail />} />

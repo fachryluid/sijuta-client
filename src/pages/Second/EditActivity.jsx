@@ -4,9 +4,15 @@ import { faQuestionCircle } from '@fortawesome/free-solid-svg-icons'
 import SecondLayout from '../../layouts/SecondLayout';
 import Alert from '../../components/Alert';
 import axios from '../../utils/axios'
-import { Link } from 'react-router-dom';
+import { Link, useParams } from 'react-router-dom';
 
-const AddActivity = ({ verifyToken }) => {
+const AddActivity = () => {
+  const [selectedFile, setSelectedFile] = useState(null)
+  const [showAlert, setShowAlert] = useState({ show: false, message: '' })
+  const [userFieldWorks, setUserFieldWorks] = useState([])
+  const [userJournal, setUserJournal] = useState({})
+  const [isLoading, setIsLoading] = useState(true)
+  const { uuid } = useParams()
   const [formData, setFormData] = useState({
     groupId: '',
     date: new Date().toLocaleDateString('en-CA'),
@@ -18,10 +24,6 @@ const AddActivity = ({ verifyToken }) => {
     outcome: '',
     note: '',
   })
-  const [selectedFile, setSelectedFile] = useState(null)
-  const [showAlert, setShowAlert] = useState({ show: false, message: '' })
-  const [userFieldWorks, setUserFieldWorks] = useState([])
-  const [isLoading, setIsLoading] = useState(true)
 
   useEffect(() => {
     getUserFieldwork()
@@ -33,6 +35,18 @@ const AddActivity = ({ verifyToken }) => {
       const userData = JSON.parse(localStorage.getItem('userData'))
       const { data } = await axios.get(`/user/${userData.uuid}/groups`)
       setUserFieldWorks(data.data)
+    } catch (error) {
+      setShowAlert({ show: true, message: error.response?.data?.message || error.message, color: 'failure' })
+    } finally {
+      getData()
+    }
+  }
+
+  const getData = async () => {
+    try {
+      const { data } = await axios.get(`/journal/${uuid}`)
+      setUserJournal(data.data)
+      console.log(data.data)
     } catch (error) {
       setShowAlert({ show: true, message: error.response?.data?.message || error.message, color: 'failure' })
     } finally {
@@ -112,7 +126,6 @@ const AddActivity = ({ verifyToken }) => {
         rightButtonIcon={
           <FontAwesomeIcon icon={faQuestionCircle} className="w-4 h-4 text-[#fffffe]" />
         }
-        verifyToken={verifyToken}
         isLoading={isLoading}
       >
         {showAlert.show && <Alert color={showAlert.color} onDismiss={() => setShowAlert({ show: false })} alertMessage={showAlert.message} className="mb-5" />}
@@ -143,7 +156,7 @@ const AddActivity = ({ verifyToken }) => {
                 className="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0 focus:border-main-0 peer"
                 placeholder=""
                 onChange={(e) => setFormData({ ...formData, date: e.target.value })}
-                defaultValue={formData.date}
+                defaultValue={userJournal.date}
               />
               <label
                 htmlFor="date"
@@ -159,7 +172,7 @@ const AddActivity = ({ verifyToken }) => {
                   name="start"
                   id="start"
                   className="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0 focus:border-main-0 peer"
-                  defaultValue={formData.start}
+                  defaultValue={userJournal.start}
                   onChange={(e) => setFormData({ ...formData, start: e.target.value })}
                 />
                 <label
@@ -175,7 +188,7 @@ const AddActivity = ({ verifyToken }) => {
                   name="end"
                   id="end"
                   className="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0 focus:border-main-0 peer"
-                  defaultValue={formData.end}
+                  defaultValue={userJournal.end}
                   onChange={(e) => setFormData({ ...formData, end: e.target.value })}
                 />
                 <label
@@ -194,6 +207,7 @@ const AddActivity = ({ verifyToken }) => {
                 className="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0 focus:border-main-0 peer"
                 placeholder=""
                 onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                defaultValue={userJournal.name}
               />
               <label
                 htmlFor="name"
@@ -210,6 +224,7 @@ const AddActivity = ({ verifyToken }) => {
                 placeholder=""
                 rows="4"
                 onChange={(e) => setFormData({ ...formData, desc: e.target.value })}
+                defaultValue={userJournal.desc}
               ></textarea>
               <label
                 htmlFor="desc"

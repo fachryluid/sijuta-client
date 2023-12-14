@@ -4,19 +4,7 @@ import { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Loader from '../components/Loader';
 
-const SecondLayout = ({ children, title, backButton, rightButtonLink, rightButtonIcon, verifyToken, isLoading }) => {
-  const navigate = useNavigate()
-
-  useEffect(() => {
-    const checkToken = async () => {
-      const isTokenValid = await verifyToken();
-      if (!isTokenValid) {
-        return navigate("/login")
-      }
-    };
-    checkToken();
-  }, [])
-
+const SecondLayout = ({ children, title, backButton, rightButtonLink, rightButtonIcon, isLoading }) => {
   return (
     <>
       {isLoading && <Loader />}

@@ -3,6 +3,7 @@ import AdminLayout from "../../layouts/AdminLayout"
 import { useEffect, useState } from "react"
 import axios from "../../utils/axios"
 import Alert from '../../components/Alert';
+import { Link } from "react-router-dom";
 
 const Master = () => {
   const [openModal, setOpenModal] = useState(undefined)
@@ -41,9 +42,13 @@ const Master = () => {
       >
         <div className="flex justify-between items-center mb-5">
           <h1 className="text-2xl">Master Data</h1>
+          <Link to="/administrator/master/create">
+            <Button className="bg-main-0">
+              Tambah
+            </Button>
+          </Link>
         </div>
         {showAlert.show && <Alert color={showAlert.color} onDismiss={() => setShowAlert({ show: false })} alertMessage={showAlert.message} className="mb-5" />}
-
         <div>
           <div className="tab-buttons text-lg mb-5">
             <button
@@ -76,6 +81,9 @@ const Master = () => {
                   <Table.HeadCell>
                     NAMA
                   </Table.HeadCell>
+                  <Table.HeadCell>
+                    AKSI
+                  </Table.HeadCell>
                 </Table.Head>
                 <Table.Body className="divide-y">
                   {dataStudents.map((e, idx) => (
@@ -85,6 +93,14 @@ const Master = () => {
                       </Table.Cell>
                       <Table.Cell>
                         {e.user.name}
+                      </Table.Cell>
+                      <Table.Cell className="flex space-x-2.5">
+                        <Link to={`/administrator/master/mahasiswa/${e.user.uuid}`} className="font-bold text-main-0 hover:underline">
+                          Detail
+                        </Link>
+                        <button className="font-bold text-red-500 hover:underline">
+                          Hapus
+                        </button>
                       </Table.Cell>
                     </Table.Row>
                   ))}
@@ -100,6 +116,9 @@ const Master = () => {
                   <Table.HeadCell>
                     NAMA
                   </Table.HeadCell>
+                  <Table.HeadCell>
+                    AKSI
+                  </Table.HeadCell>
                 </Table.Head>
                 <Table.Body className="divide-y">
                   {dataLecturers.map((e, idx) => (
@@ -109,6 +128,14 @@ const Master = () => {
                       </Table.Cell>
                       <Table.Cell>
                         {e.user.name}
+                      </Table.Cell>
+                      <Table.Cell className="flex space-x-2.5">
+                        <Link to={`/administrator/master/dosen/${e.user.uuid}`} className="font-bold text-main-0 hover:underline">
+                          Detail
+                        </Link>
+                        <button className="font-bold text-red-500 hover:underline">
+                          Hapus
+                        </button>
                       </Table.Cell>
                     </Table.Row>
                   ))}
@@ -124,6 +151,9 @@ const Master = () => {
                   <Table.HeadCell>
                     NAMA
                   </Table.HeadCell>
+                  <Table.HeadCell>
+                    AKSI
+                  </Table.HeadCell>
                 </Table.Head>
                 <Table.Body className="divide-y">
                   {dataAdministrators.map((e, idx) => (
@@ -133,6 +163,14 @@ const Master = () => {
                       </Table.Cell>
                       <Table.Cell>
                         {e.user.name}
+                      </Table.Cell>
+                      <Table.Cell className="flex space-x-2.5">
+                        <Link to={`/administrator/master/administrator/${e.user.uuid}`} className="font-bold text-main-0 hover:underline">
+                          Detail
+                        </Link>
+                        <button className="font-bold text-red-500 hover:underline">
+                          Hapus
+                        </button>
                       </Table.Cell>
                     </Table.Row>
                   ))}

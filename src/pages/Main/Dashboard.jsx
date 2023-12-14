@@ -8,6 +8,7 @@ import axios from './../../utils/axios'
 const Dashboard = () => {
   const [isLoading, setIsLoading] = useState(true)
   const [user, setUser] = useState({})
+  const [stats, setStats] = useState({})
   const [showAlert, setShowAlert] = useState({ show: false, message: '' })
 
   useEffect(() => {
@@ -20,6 +21,18 @@ const Dashboard = () => {
       const user = JSON.parse(localStorage.getItem('userData'))
       const userRes = await axios.get(`/user/${user.uuid}/role/${user.role}`)
       setUser(userRes.data.data)
+    } catch (error) {
+      setShowAlert({ show: true, message: error.response?.data?.message || error.message })
+    } finally {
+      getStats()
+    }
+  }
+
+  const getStats = async () => {
+    try {
+      const { data } = await axios.get(`/journal/stats/stats`)
+      console.log(data.data)
+      setStats(data.data)
     } catch (error) {
       setShowAlert({ show: true, message: error.response?.data?.message || error.message })
     } finally {
@@ -45,11 +58,11 @@ const Dashboard = () => {
         <div className="max-w-lg mx-auto px-5 sm:px-2 mt-5 pb-20">
           <section className="grid grid-cols-2 gap-3">
             <div className='flex flex-col border px-5 py-3 rounded-xl border-2 border-gray-200 shadow'>
-              <span className='text-3xl font-bold text-[#6246ea] mb-1'>20</span>
+              <span className='text-3xl font-bold text-[#6246ea] mb-1'>{stats.totalJournals}</span>
               <span className='text-sm font-medium'>Kegiatan Saya</span>
             </div>
             <div className='flex flex-col border px-5 py-3 rounded-xl border-2 border-gray-200 shadow'>
-              <span className='text-3xl font-bold text-[#6246ea] mb-1'>10</span>
+              <span className='text-3xl font-bold text-[#6246ea] mb-1'>{stats.jurnalParafed}</span>
               <span className='text-sm font-medium'>Kegiatan Terparaf</span>
             </div>
           </section>

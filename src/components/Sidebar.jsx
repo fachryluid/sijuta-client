@@ -26,7 +26,7 @@ const Sidebar = ({ Menus }) => {
         <div className={`sm:gap-x-4 flex items-center`}>
           <img src={Logo} alt='Logo' className='ml-2 h-8 rounded' />
           <span className='hidden sm:block text-xl font-medium whitespace-nowrap dark:text-white'>
-            SIJUPRI
+            SIJUTA
           </span>
         </div>
 

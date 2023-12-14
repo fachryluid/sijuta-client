@@ -106,7 +106,7 @@ const Login = () => {
       <AuthLayout>
         <div className="mb-3 text-center text-gray-700">
           <h1 className="text-2xl font-bold">LOGIN</h1>
-          <h4>Sistem Informasi Jurnal Pribadi</h4>
+          <h4>Sistem Informasi Jurnal Kegiatan MBKM</h4>
         </div>
         <form onSubmit={handleLogin}>
           <div className="relative z-0 w-full mb-6 group mt-8">
