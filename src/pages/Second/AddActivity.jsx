@@ -129,9 +129,11 @@ const AddActivity = ({ verifyToken }) => {
               >
                 <option value="" hidden>Pilih Jenis Kegiatan</option>
                 {userFieldWorks.map((userFieldWork, key) => (
-                  <option key={key} value={userFieldWork.uuid}>
-                    {userFieldWork.fieldwork.name} ({userFieldWork.fieldwork.periode})
-                  </option>
+                  userFieldWork.fieldwork && (
+                    <option key={key} value={userFieldWork.uuid}>
+                      {userFieldWork.fieldwork.name} ({userFieldWork.fieldwork.periode})
+                    </option>
+                  )
                 ))}
               </select>
             </div>

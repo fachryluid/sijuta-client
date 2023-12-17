@@ -1,75 +1,40 @@
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faQuestionCircle } from '@fortawesome/free-solid-svg-icons'
+import { faPersonCircleCheck } from '@fortawesome/free-solid-svg-icons'
 import SecondLayout from '../../layouts/SecondLayout';
 import Alert from '../../components/Alert';
 import axios from '../../utils/axios'
 import { Link, useParams } from 'react-router-dom';
+import fetcher from "../../utils/fetcher"
+import useSWR from 'swr'
+import { useForm } from "react-hook-form"
+import Input from '../../components/Form/Input';
+import Textarea from '../../components/Form/Textarea';
 
 const AddActivity = () => {
   const [selectedFile, setSelectedFile] = useState(null)
   const [showAlert, setShowAlert] = useState({ show: false, message: '' })
-  const [userFieldWorks, setUserFieldWorks] = useState([])
-  const [userJournal, setUserJournal] = useState({})
-  const [isLoading, setIsLoading] = useState(true)
   const { uuid } = useParams()
-  const [formData, setFormData] = useState({
-    groupId: '',
-    date: new Date().toLocaleDateString('en-CA'),
-    start: '00:00',
-    end: '00:00',
-    name: '',
-    desc: '',
-    location: '',
-    outcome: '',
-    note: '',
-  })
+  const [isLoading, setIsLoading] = useState(true)
+  const { data: userJournalData, error: userJournalError, isLoading: userJournalIsLoading } = useSWR(`/journal/${uuid}`, fetcher)
 
-  useEffect(() => {
-    getUserFieldwork()
-  }, [])
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm()
 
-  const getUserFieldwork = async () => {
+  const onSubmit = async (data) => {
     try {
       setIsLoading(true)
-      const userData = JSON.parse(localStorage.getItem('userData'))
-      const { data } = await axios.get(`/user/${userData.uuid}/groups`)
-      setUserFieldWorks(data.data)
-    } catch (error) {
-      setShowAlert({ show: true, message: error.response?.data?.message || error.message, color: 'failure' })
-    } finally {
-      getData()
-    }
-  }
+      
+      const formData = new FormData();
+      formData.append('file', selectedFile)
+      for (const key in data) {
+        formData.append(key, data[key])
+      }
 
-  const getData = async () => {
-    try {
-      const { data } = await axios.get(`/journal/${uuid}`)
-      setUserJournal(data.data)
-      console.log(data.data)
-    } catch (error) {
-      setShowAlert({ show: true, message: error.response?.data?.message || error.message, color: 'failure' })
-    } finally {
-      setIsLoading(false)
-    }
-  }
-
-  const handleSubmit = async (e) => {
-    try {
-      e.preventDefault()
-      setIsLoading(true)
-
-      const formDataObject = new FormData();
-      const fields = ['groupId', 'date', 'start', 'end', 'name', 'desc', 'location', 'outcome', 'note'];
-
-      fields.forEach(field => {
-        formDataObject.append(field, formData[field]);
-      });
-
-      formDataObject.append('file', selectedFile)
-      formDataObject.append('userId', JSON.parse(localStorage.getItem('userData')).uuid)
-
-      const { data } = await axios.post('journal/add', formDataObject, {
+      const { data: response } = await axios.patch(`journal/${uuid}`, formData, {
         headers: {
           "Content-Type": "multipart/form-data",
         }
@@ -77,12 +42,11 @@ const AddActivity = () => {
 
       const alertMessage = (
         <span>
-          {data.message} <Link className="font-bold" to={`/kegiatan/${data.data.uuid}`}>Lihat</Link>
+          {response.message} <Link className="font-bold" to={`/kegiatan/${response.data.uuid}`}>Lihat</Link>
         </span>
       );
 
       setShowAlert({ show: true, message: alertMessage, color: 'success' })
-      e.target.reset()
     } catch (error) {
       setShowAlert({ show: true, message: error.response?.data?.message || error.message, color: 'failure' })
     } finally {
@@ -122,164 +86,53 @@ const AddActivity = () => {
       <SecondLayout
         title="Edit Kegiatan"
         backButton={true}
-        rightButtonLink="/bantuan/tambah-kegiatan"
+        rightButtonLink="/kegiatan"
         rightButtonIcon={
-          <FontAwesomeIcon icon={faQuestionCircle} className="w-4 h-4 text-[#fffffe]" />
+          <FontAwesomeIcon icon={faPersonCircleCheck} className="w-4 h-4 text-[#fffffe]" />
         }
-        isLoading={isLoading}
+        isLoading={userJournalIsLoading && isLoading}
       >
         {showAlert.show && <Alert color={showAlert.color} onDismiss={() => setShowAlert({ show: false })} alertMessage={showAlert.message} className="mb-5" />}
         <section className="mt-5">
-          <form encType="multipart/form-data" onSubmit={handleSubmit}>
-            <div className="relative z-0 w-full mb-6 group">
+          <form encType="multipart/form-data" onSubmit={handleSubmit(onSubmit)}>
+            <div className="mb-6">
               <label htmlFor="groupId" className="peer-focus:font-medium absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:left-0 peer-focus:text-main-0 peer-focus:dark:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6">Jenis Kegiatan</label>
               <select
                 id="groupId"
                 name="groupId"
                 className="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0 focus:border-main-0 peer"
-                onChange={(e) => setFormData({ ...formData, groupId: e.target.value })}
-                value={formData.groupId}
+                disabled={true}
               >
-                <option value="" hidden>Pilih Jenis Kegiatan</option>
-                {userFieldWorks.map((userFieldWork, key) => (
-                  <option key={key} value={userFieldWork.uuid}>
-                    {userFieldWork.fieldwork.name} ({userFieldWork.fieldwork.periode})
-                  </option>
-                ))}
+                <option>
+                  {userJournalData?.data?.group?.fieldwork?.name} ({userJournalData?.data?.group?.fieldwork?.periode})
+                </option>
               </select>
             </div>
-            <div className={`relative z-0 mb-6 group w-full`}>
-              <input
-                type="date"
-                name="date"
-                id="date"
-                className="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0 focus:border-main-0 peer"
-                placeholder=""
-                onChange={(e) => setFormData({ ...formData, date: e.target.value })}
-                defaultValue={userJournal.date}
-              />
-              <label
-                htmlFor="date"
-                className="peer-focus:font-medium absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:left-0 peer-focus:text-main-0 peer-focus:dark:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6"
-              >
-                Tanggal
-              </label>
+            <div className="mb-6">
+              <Input type="date" name="date" label="Tanggal" defaultValue={userJournalData?.data?.date} register={register} />
             </div>
             <div className="grid grid-cols-2 gap-5">
-              <div className="relative z-0 w-full mb-6 group">
-                <input
-                  type="time"
-                  name="start"
-                  id="start"
-                  className="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0 focus:border-main-0 peer"
-                  defaultValue={userJournal.start}
-                  onChange={(e) => setFormData({ ...formData, start: e.target.value })}
-                />
-                <label
-                  htmlFor="start"
-                  className="peer-focus:font-medium absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:left-0 peer-focus:text-main-0 peer-focus:dark:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6"
-                >
-                  Mulai
-                </label>
+              <div className="mb-6">
+                <Input type="time" name="start" label="Mulai" defaultValue={userJournalData?.data?.start} register={register} />
               </div>
-              <div className="relative z-0 w-full mb-6 group">
-                <input
-                  type="time"
-                  name="end"
-                  id="end"
-                  className="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0 focus:border-main-0 peer"
-                  defaultValue={userJournal.end}
-                  onChange={(e) => setFormData({ ...formData, end: e.target.value })}
-                />
-                <label
-                  htmlFor="end"
-                  className="peer-focus:font-medium absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:left-0 peer-focus:text-main-0 peer-focus:dark:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6"
-                >
-                  Selesai
-                </label>
+              <div className="mb-6">
+                <Input type="time" name="end" label="Selesai" defaultValue={userJournalData?.data?.end} register={register} />
               </div>
             </div>
-            <div className="relative z-0 w-full mb-6 group">
-              <input
-                type="text"
-                name="name"
-                id="name"
-                className="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0 focus:border-main-0 peer"
-                placeholder=""
-                onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                defaultValue={userJournal.name}
-              />
-              <label
-                htmlFor="name"
-                className="peer-focus:font-medium absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:left-0 peer-focus:text-main-0 peer-focus:dark:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6"
-              >
-                Nama Kegiatan
-              </label>
+            <div className="mb-6">
+              <Input type="text" name="name" label="Nama Kegiatan" defaultValue={userJournalData?.data?.name} register={register} />
             </div>
-            <div className="relative z-0 w-full mb-6 group">
-              <textarea
-                name="desc"
-                id="desc"
-                className="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0 focus:border-main-0 peer"
-                placeholder=""
-                rows="4"
-                onChange={(e) => setFormData({ ...formData, desc: e.target.value })}
-                defaultValue={userJournal.desc}
-              ></textarea>
-              <label
-                htmlFor="desc"
-                className="peer-focus:font-medium absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:left-0 peer-focus:text-main-0 peer-focus:dark:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6"
-              >
-                Deskripsi Kegiatan
-              </label>
+            <div className="mb-6">
+              <Textarea type="text" name="desc" label="Deskripsi Kegiatan" defaultValue={userJournalData?.data?.desc} register={register} />
             </div>
-            <div className="relative z-0 w-full mb-6 group">
-              <input
-                type="text"
-                name="location"
-                id="location"
-                className="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0 focus:border-main-0 peer"
-                placeholder=""
-                onChange={(e) => setFormData({ ...formData, location: e.target.value })}
-              />
-              <label
-                htmlFor="location"
-                className="peer-focus:font-medium absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:left-0 peer-focus:text-main-0 peer-focus:dark:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6"
-              >
-                Lokasi
-              </label>
+            <div className="mb-6">
+              <Input type="text" name="location" label="Lokasi" defaultValue={userJournalData?.data?.location} register={register} />
             </div>
-            <div className="relative z-0 w-full mb-6 group">
-              <input
-                type="number"
-                name="outcome"
-                id="outcome"
-                className="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0 focus:border-main-0 peer"
-                placeholder=""
-                onChange={(e) => setFormData({ ...formData, outcome: e.target.value })}
-              />
-              <label
-                htmlFor="outcome"
-                className="peer-focus:font-medium absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:left-0 peer-focus:text-main-0 peer-focus:dark:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6"
-              >
-                Capaian
-              </label>
+            <div className="mb-6">
+              <Input type="text" name="outcome" label="Capaian" defaultValue={userJournalData?.data?.outcome} register={register} />
             </div>
-            <div className="relative z-0 w-full mb-6 group">
-              <textarea
-                name="note"
-                id="note"
-                className="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0 focus:border-main-0 peer"
-                placeholder=""
-                onChange={(e) => setFormData({ ...formData, note: e.target.value })}
-                rows="4"
-              ></textarea>
-              <label
-                htmlFor="note"
-                className="peer-focus:font-medium absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:left-0 peer-focus:text-main-0 peer-focus:dark:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6"
-              >
-                Keterangan (Opsional)
-              </label>
+            <div className="mb-6">
+              <Textarea type="text" name="note" label="Keterangan (Opsional)" defaultValue={userJournalData?.data?.note} register={register} />
             </div>
             <div className="flex items-center justify-center w-full mb-6">
               <label htmlFor="dropzone-file" className="relative flex flex-col items-center justify-center w-full h-64 border-2 border-gray-300 border-dashed rounded-lg cursor-pointer bg-gray-50 dark:hover:bg-bray-800 dark:bg-gray-700 hover:bg-gray-100 dark:border-gray-600 dark:hover:border-gray-500 dark:hover:bg-gray-600 overflow-hidden">

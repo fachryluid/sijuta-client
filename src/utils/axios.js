@@ -10,6 +10,7 @@ const getToken = () => {
     const token = CryptoJS.AES.decrypt(accessToken, key).toString(CryptoJS.enc.Utf8)
     return token
   } catch (error) {
+    window.location.href = '/login';
     return null
   }
 }
@@ -38,7 +39,6 @@ instance.interceptors.response.use(
   (error) => {
     if (error.response && error.response.status === 401) {
       localStorage.removeItem('accessToken')
-      // window.location.href = '/login';
     }
     return Promise.reject(error);
   }

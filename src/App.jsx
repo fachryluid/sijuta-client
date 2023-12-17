@@ -26,6 +26,7 @@ import KKNDetail from './pages/Admin/KKNDetail';
 import Master from './pages/Admin/Master';
 import MasterCreate from './pages/Admin/MasterCreate';
 import MasterDetail from './pages/Admin/MasterDetail';
+import MagangCreateGroup from './pages/Admin/MagangCreateGroup';
 
 const App = () => {
 
@@ -62,6 +63,7 @@ const App = () => {
         <Route path="/administrator/magang" element={<Magang />} />
         <Route path="/administrator/magang/create" element={<MagangCreate />} />
         <Route path="/administrator/magang/:fieldworkId" element={<MagangDetail />} />
+        <Route path="/administrator/magang/:fieldworkId/create-group" element={<MagangCreateGroup />} />
         <Route path="/administrator/kkn" element={<KKN />} />
         <Route path="/administrator/kkn/create" element={<KKNCreate />} />
         <Route path="/administrator/kkn/:fieldworkId" element={<KKNDetail />} />

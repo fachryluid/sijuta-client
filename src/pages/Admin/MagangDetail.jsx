@@ -66,9 +66,16 @@ const MagangDetail = ({ verifyToken }) => {
       >
         <div className="flex justify-between items-center mb-5">
           <h1 className="text-2xl">Kelompok Magang</h1>
-          <Button onClick={() => setOpenModal(`import-groups`)} className="bg-main-0">
-            Import
-          </Button>
+          <div className="flex space-x-2">
+            <Link to={`/administrator/magang/${fieldworkId}/create-group`}>
+              <Button className="bg-main-0">
+                Tambah Kelompok
+              </Button>
+            </Link>
+            <Button onClick={() => setOpenModal(`import-groups`)} className="bg-main-0">
+              Import
+            </Button>
+          </div>
           <Modal
             show={openModal === `import-groups`}
             size="md"

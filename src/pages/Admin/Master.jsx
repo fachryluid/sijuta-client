@@ -41,12 +41,38 @@ const Master = () => {
         isLoading={isLoading}
       >
         <div className="flex justify-between items-center mb-5">
-          <h1 className="text-2xl">Master Data</h1>
-          <Link to="/administrator/master/create">
-            <Button className="bg-main-0">
-              Tambah
-            </Button>
-          </Link>
+          {activeTab === 'Mahasiswa' && <>
+            <h1 className="text-2xl">Master Data Mahasiswa</h1>
+            <Link to="/administrator/master/create">
+              <Button className="bg-main-0">
+                Tambah Mahasiswa
+              </Button>
+            </Link>
+          </>}
+          {activeTab === 'Dosen' && <>
+            <h1 className="text-2xl">Master Data Dosen</h1>
+            <Link to="/administrator/master/create">
+              <Button className="bg-main-0">
+                Tambah Dosen
+              </Button>
+            </Link>
+          </>}
+          {activeTab === 'Admin' && <>
+            <h1 className="text-2xl">Master Data Admin</h1>
+            <Link to="/administrator/master/create">
+              <Button className="bg-main-0">
+                Tambah Admin
+              </Button>
+            </Link>
+          </>}
+          {activeTab === 'Kelompok' && <>
+            <h1 className="text-2xl">Master Data Kelompok</h1>
+            <Link to="/administrator/master/kelompok/create">
+              <Button className="bg-main-0">
+                Tambah Kelompok
+              </Button>
+            </Link>
+          </>}
         </div>
         {showAlert.show && <Alert color={showAlert.color} onDismiss={() => setShowAlert({ show: false })} alertMessage={showAlert.message} className="mb-5" />}
         <div>

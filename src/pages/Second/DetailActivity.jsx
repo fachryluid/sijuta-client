@@ -4,8 +4,9 @@ import { faEdit } from '@fortawesome/free-solid-svg-icons'
 import SecondLayout from '../../layouts/SecondLayout'
 import Alert from '../../components/Alert'
 import axios from '../../utils/axios'
-import { useParams } from 'react-router-dom'
-import { Modal } from 'flowbite-react'
+import { Link, useNavigate, useParams } from 'react-router-dom'
+import { Button, Modal } from 'flowbite-react'
+import { HiOutlineExclamationCircle } from 'react-icons/hi'
 
 const DetailActivity = ({ verifyToken }) => {
   const [showAlert, setShowAlert] = useState(false)
@@ -14,6 +15,7 @@ const DetailActivity = ({ verifyToken }) => {
   const [isLoading, setIsLoading] = useState(true)
   const [openModal, setOpenModal] = useState(null)
   const { uuid } = useParams()
+  const navigate = useNavigate()
 
   useEffect(() => {
     getJournal()
@@ -32,12 +34,26 @@ const DetailActivity = ({ verifyToken }) => {
     }
   }
 
+  const handleDelete = async (uuid) => {
+    try {
+      setIsLoading(true)
+      await axios.delete(`/journal/${uuid}`)
+
+      navigate('/kegiatan')
+    } catch (error) {
+      setShowAlertMessage(error.response?.data?.message || error.message)
+      setShowAlert(true)
+    } finally {
+      setIsLoading(false)
+    }
+  }
+
   return (
     <>
       <SecondLayout
         title="Detail Kegiatan"
         backButton={true}
-        rightButtonLink={"/kegiatan/"+journal.uuid+"/edit"}
+        rightButtonLink={"/kegiatan/" + journal.uuid + "/edit"}
         rightButtonIcon={
           <FontAwesomeIcon icon={faEdit} className="w-4 h-4 text-[#fffffe]" />
         }
@@ -74,6 +90,41 @@ const DetailActivity = ({ verifyToken }) => {
               <div className="flex flex-col pt-3">
                 <dt className="mb-1 text-gray-500 dark:text-gray-400">Paraf DPL</dt>
                 <dd className="font-semibold">-</dd>
+              </div>
+              <div className="flex flex-col pt-3">
+                <dt className="mb-1 text-gray-500 dark:text-gray-400">Aksi</dt>
+                <dd className="flex space-x-2.5">
+                  <Link to={`/kegiatan/${journal.uuid}/edit`} className="font-bold text-main-0 hover:underline">
+                    Detail
+                  </Link>
+                  <button onClick={() => setOpenModal(`delete-${journal.uuid}`)} className="font-bold text-red-500 hover:underline">
+                    Hapus
+                  </button>
+                  <Modal
+                    show={openModal === `delete-${journal.uuid}`}
+                    size="md"
+                    popup
+                    onClose={() => setOpenModal(undefined)}
+                  >
+                    <Modal.Header />
+                    <Modal.Body>
+                      <div className="text-center">
+                        <HiOutlineExclamationCircle className="mx-auto mb-4 h-14 w-14 text-gray-400 dark:text-gray-200" />
+                        <h3 className="mb-5 text-lg font-normal text-gray-500 dark:text-gray-400">
+                          Konfirmasi Hapus data kegiatan "{journal.name}"
+                        </h3>
+                        <div className="flex justify-center gap-4">
+                          <Button color="failure" onClick={() => handleDelete(journal.uuid)}>
+                            Ya, Hapus
+                          </Button>
+                          <Button color="gray" onClick={() => setOpenModal(undefined)}>
+                            Batal
+                          </Button>
+                        </div>
+                      </div>
+                    </Modal.Body>
+                  </Modal>
+                </dd>
               </div>
             </dl>
           </div>
