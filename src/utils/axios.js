@@ -10,7 +10,7 @@ const getToken = () => {
     const token = CryptoJS.AES.decrypt(accessToken, key).toString(CryptoJS.enc.Utf8)
     return token
   } catch (error) {
-    window.location.href = '/login';
+    // window.location.href = '/login';
     return null
   }
 }
