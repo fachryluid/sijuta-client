@@ -14,11 +14,10 @@ const PrivateRoutes = ({ role }) => {
     const userData = JSON.parse(localStorage.getItem('userData'))
 
     if (!accessToken) {
-      toast.error('Akses tidak valid')
       return navigate('/login')
     }
 
-    axios.get(`/auth/verify-token/${userData.role}`)
+    axios.get(`/auth/verify-token/${userData?.role}`)
       .then((user) => {
         if (user.data.data.role != role) {
           return setToken(false)
@@ -26,7 +25,6 @@ const PrivateRoutes = ({ role }) => {
         setToken(true)
       })
       .catch((error) => {
-        toast.error(error.response?.data?.message || error.message)
         return setToken(false)
       })
   }, [])

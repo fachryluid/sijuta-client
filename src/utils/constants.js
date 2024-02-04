@@ -2,3 +2,13 @@ export const serverUrl = import.meta.env.VITE_SERVER_URL || "http://localhost:50
 export const apiUrl = import.meta.env.VITE_SERVER_URL + "/api"
 export const apiKey = import.meta.env.VITE_API_KEY || ''
 export const maxItemsPerPage = import.meta.env.VITE_MAX_ITEM_PER_PAGE || 10
+
+export const FIELDWORK_TYPE = {
+  MAGANG: 'Magang',
+  KKN: 'KKN'
+}
+
+export const FIELDWORK_STATUS = {
+  ACTIVE: 'ACTIVE',
+  INACTIVE: 'INACTIVE'
+}

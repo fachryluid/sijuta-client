@@ -9,3 +9,19 @@ export const randomString = (length) => {
   
   return result;
 }
+
+export const getPeriodes = () => {
+  const startYear = 2023;
+  const currentYear = new Date().getFullYear();
+
+  const periodes = [];
+
+  for (let year = startYear; year <= currentYear; year++) {
+    const periodeGanjil = `GANJIL ${year}`;
+    const periodeGenap = `GENAP ${year}`;
+
+    periodes.push(periodeGanjil, periodeGenap);
+  }
+
+  return periodes;
+};

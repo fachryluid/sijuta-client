@@ -95,7 +95,7 @@ const DetailActivity = ({ verifyToken }) => {
                 <dt className="mb-1 text-gray-500 dark:text-gray-400">Aksi</dt>
                 <dd className="flex space-x-2.5">
                   <Link to={`/kegiatan/${journal.uuid}/edit`} className="font-bold text-main-0 hover:underline">
-                    Detail
+                    Edit
                   </Link>
                   <button onClick={() => setOpenModal(`delete-${journal.uuid}`)} className="font-bold text-red-500 hover:underline">
                     Hapus

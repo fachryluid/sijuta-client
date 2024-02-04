@@ -1,10 +1,11 @@
-import { Button, Modal, Table } from "flowbite-react"
+import { Badge, Button, Modal, Table } from "flowbite-react"
 import AdminLayout from "../../layouts/AdminLayout"
 import { useEffect, useState } from "react"
 import axios from "./../../utils/axios"
 import { Link } from "react-router-dom"
 import { HiOutlineExclamationCircle } from "react-icons/hi"
 import Alert from '../../components/Alert';
+import { FIELDWORK_STATUS } from "../../utils/constants"
 
 const Magang = ({ verifyToken }) => {
   const [openModal, setOpenModal] = useState(undefined)
@@ -65,6 +66,9 @@ const Magang = ({ verifyToken }) => {
               Periode
             </Table.HeadCell>
             <Table.HeadCell>
+              Status
+            </Table.HeadCell>
+            <Table.HeadCell>
               <span className="sr-only">
                 Aksi
               </span>
@@ -79,9 +83,15 @@ const Magang = ({ verifyToken }) => {
                 <Table.Cell>
                   {e.periode}
                 </Table.Cell>
+                <Table.Cell>
+                    <Badge className="w-fit" color={e.status == FIELDWORK_STATUS.ACTIVE ? 'success' : 'failure'}>{e.status}</Badge>
+                </Table.Cell>
                 <Table.Cell className="flex space-x-2.5">
                   <Link to={`/administrator/magang/${e.uuid}`} className="font-bold text-main-0 hover:underline">
                     Detail
+                  </Link>
+                  <Link to={`/administrator/magang/${e.uuid}/edit`} className="font-bold text-green-500 hover:underline">
+                    Edit
                   </Link>
                   <button onClick={() => setOpenModal(`delete-${e.uuid}`)} className="font-bold text-red-500 hover:underline">
                     Hapus
