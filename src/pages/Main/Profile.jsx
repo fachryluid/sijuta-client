@@ -1,12 +1,13 @@
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faUser, faKey, faRightFromBracket, faUnlockKeyhole, faCircleQuestion, faCircleInfo } from '@fortawesome/free-solid-svg-icons'
 import MainLayout from '../../layouts/MainLayout'
-import { useNavigate } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import { Button, Modal } from 'flowbite-react'
 import { useEffect, useState } from 'react'
 import { HiOutlineExclamationCircle } from 'react-icons/hi'
 import axios from './../../utils/axios'
 import { serverUrl } from '../../utils/constants'
+import swr from '../../utils/swr'
 
 const Profile = ({ verifyToken }) => {
   const [openModal, setOpenModal] = useState(undefined)
@@ -21,6 +22,8 @@ const Profile = ({ verifyToken }) => {
     females: []
   });
   const navigate = useNavigate()
+
+  // const { data: checkPasswordData, isLoading: checkPasswordIsLoading } = swr(`/check/password`)
 
   useEffect(() => {
     getProfile()
@@ -132,14 +135,10 @@ const Profile = ({ verifyToken }) => {
               <FontAwesomeIcon icon={faUser} className="w-10" />
               Informasi Akun
             </button>
-            <button type="button" className="relative text-gray-600 inline-flex items-center w-full px-5 py-5 border-b border-gray-200 hover:bg-gray-100 hover:text-main-0 focus:z-10 focus:ring-2 focus:ring-main-0 focus:text-main-0 dark:border-gray-600 dark:hover:bg-gray-600 dark:hover:text-white dark:focus:ring-gray-500 dark:focus:text-white">
+            <Link to="/profil/ganti-password" className="relative text-gray-600 inline-flex items-center w-full px-5 py-5 border-b border-gray-200 hover:bg-gray-100 hover:text-main-0 focus:z-10 focus:ring-2 focus:ring-main-0 focus:text-main-0 dark:border-gray-600 dark:hover:bg-gray-600 dark:hover:text-white dark:focus:ring-gray-500 dark:focus:text-white">
               <FontAwesomeIcon icon={faKey} className="w-10" />
               Ganti Password
-            </button>
-            <button type="button" className="relative text-gray-600 inline-flex items-center w-full px-5 py-5 border-b border-gray-200 hover:bg-gray-100 hover:text-main-0 focus:z-10 focus:ring-2 focus:ring-main-0 focus:text-main-0 dark:border-gray-600 dark:hover:bg-gray-600 dark:hover:text-white dark:focus:ring-gray-500 dark:focus:text-white">
-              <FontAwesomeIcon icon={faUnlockKeyhole} className="w-10" />
-              Lupa Password
-            </button>
+            </Link>
             <button type="button" className="relative text-gray-600 inline-flex items-center w-full px-5 py-5 border-b border-gray-200 hover:bg-gray-100 hover:text-main-0 focus:z-10 focus:ring-2 focus:ring-main-0 focus:text-main-0 dark:border-gray-600 dark:hover:bg-gray-600 dark:hover:text-white dark:focus:ring-gray-500 dark:focus:text-white">
               <FontAwesomeIcon icon={faCircleQuestion} className="w-10" />
               Bantuan

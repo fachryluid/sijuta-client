@@ -1,4 +1,4 @@
-import { useNavigate, useParams } from "react-router-dom";
+import { Link, useNavigate, useParams } from "react-router-dom";
 import AdminLayout from "../../../layouts/AdminLayout";
 import { Badge, Button, Card, Dropdown, FileInput } from "flowbite-react";
 import { Formik, Form, ErrorMessage } from "formik";
@@ -15,14 +15,17 @@ import MainTable from "../../../components/Main/MainTable";
 import { HiChevronDown } from "react-icons/hi";
 
 export default function FieldworkDetail() {
-  const { fieldworkId, fieldworkType } = useParams()
-  const { data: fieldworkData, isLoading: fieldworkIsLoading } = swr(`/admin/fieldwork/${fieldworkId}`)
-  const { data: groupsData, isLoading: groupsIsLoading } = swr(`/admin/groups/${fieldworkId}`)
-  const [openModal, setOpenModal] = useState(undefined)
   const navigate = useNavigate()
+  const { fieldworkId, fieldworkType } = useParams()
+  const [openModal, setOpenModal] = useState(undefined)
+  const [pagination, setPagination] = useState({
+    currentPage: 1,
+    limitPage: 5,
+    searchQuery: ''
+  })
 
-  console.log(fieldworkData)
-  console.log(groupsData)
+  const { data: fieldworkData, isLoading: fieldworkIsLoading } = swr(`/admin/fieldwork/${fieldworkId}`)
+  const { data: groupsData, isLoading: groupsIsLoading } = swr(`/admin/groups/fieldwork/${fieldworkId}?page=${pagination.currentPage}&limit=${pagination.limitPage}&search_query=${pagination.searchQuery}`)
 
   return (
     <AdminLayout
@@ -111,11 +114,14 @@ export default function FieldworkDetail() {
           </div>
           <div className="flex flex-col pl-5">
             <dt className="mb-1 text-gray-500 dark:text-gray-400">Jumlah</dt>
-            <dd className="font-semibold">{groupsData?.data?.length}</dd>
+            <dd className="font-semibold">{groupsData?.totalGroups}</dd>
           </div>
         </dl>
         <MainTable
-          columns={['NIM', 'Nama', 'Lokasi', 'Pembimbing 1', 'Pembimbing 2', 'Aksi']}
+          columns={['NIM', 'Nama', 'Lokasi', 'Aksi']}
+          pagination={pagination}
+          setPagination={setPagination}
+          totalPages={groupsData?.totalPage}
           items={groupsData?.data?.map(item => ([
             <>
               {item.students.map((student, idx) => (
@@ -128,12 +134,10 @@ export default function FieldworkDetail() {
               ))}
             </>,
             item.location,
-            item.pembimbing1,
-            item.pembimbing2,
             <div className="flex space-x-2.5">
-              {/* <Link to={`/administrator/fieldwork/${fieldworkType}/${item.uuid}/show`} className="font-bold text-main-0 hover:underline">
+              <Link to={`/administrator/group/${item.uuid}/detail`} className="font-bold text-main-0 hover:underline">
                 Detail
-              </Link> */}
+              </Link>
               {/* <Link to={`/administrator/fieldwork/${fieldworkType}/${item.uuid}/edit`} className="font-bold text-green-500 hover:underline">
                 Edit
               </Link> */}

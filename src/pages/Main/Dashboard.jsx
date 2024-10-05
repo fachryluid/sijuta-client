@@ -1,8 +1,5 @@
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faBell } from '@fortawesome/free-solid-svg-icons'
-import MainLayout from '../../layouts/MainLayout'
-import { Navigate } from 'react-router-dom'
 import { useEffect, useState } from 'react'
+import MainLayout from '../../layouts/MainLayout'
 import axios from './../../utils/axios'
 
 const Dashboard = () => {
@@ -31,7 +28,6 @@ const Dashboard = () => {
   const getStats = async () => {
     try {
       const { data } = await axios.get(`/journal/stats/stats`)
-      console.log(data.data)
       setStats(data.data)
     } catch (error) {
       setShowAlert({ show: true, message: error.response?.data?.message || error.message })
@@ -55,17 +51,23 @@ const Dashboard = () => {
             </button> */}
           </div>
         </div>
-        <div className="max-w-lg mx-auto px-5 sm:px-2 mt-5 pb-20">
+        <div className="max-w-lg mx-auto px-5 sm:px-0 mt-5">
           <section className="grid grid-cols-2 gap-3">
-            <div className='flex flex-col border px-5 py-3 rounded-xl border-2 border-gray-200 shadow'>
+            <div className='flex flex-col px-5 py-3 rounded-xl border-2 border-gray-200 shadow'>
               <span className='text-3xl font-bold text-[#6246ea] mb-1'>{stats.totalJournals}</span>
               <span className='text-sm font-medium'>Kegiatan Saya</span>
             </div>
-            <div className='flex flex-col border px-5 py-3 rounded-xl border-2 border-gray-200 shadow'>
+            <div className='flex flex-col px-5 py-3 rounded-xl border-2 border-gray-200 shadow'>
               <span className='text-3xl font-bold text-[#6246ea] mb-1'>{stats.jurnalParafed}</span>
               <span className='text-sm font-medium'>Kegiatan Terparaf</span>
             </div>
           </section>
+        </div>
+        <div className="max-w-lg mx-auto px-5 sm:px-0 mt-5">
+          <h5 className="font-bold text-lg text-gray-600 mb-3">Informasi</h5>
+          <div className='py-5 text-center bg-gray-50 rounded-lg'>
+            <p className='text-gray-400 text-sm'>Informasi belum tersedia</p>
+          </div>
         </div>
       </MainLayout>
     </>

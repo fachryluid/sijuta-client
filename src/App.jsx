@@ -33,6 +33,8 @@ import FieldworkIndex from './pages/Admin/Fieldwork/FieldworkIndex';
 import FieldworkEdit from './pages/Admin/Fieldwork/FieldworkEdit';
 import FieldworkCreate from './pages/Admin/Fieldwork/FieldworkCreate';
 import FieldworkDetail from './pages/Admin/Fieldwork/FieldworkDetail';
+import ChangePassword from './pages/Second/profil/ChangePassword';
+import AdminGroupDetail from './pages/Admin/Group/GroupDetail';
 
 const App = () => {
 
@@ -57,6 +59,7 @@ const App = () => {
         <Route path="/kegiatan" element={<Activity />} />
         <Route path="/galeri" element={<Gallery />} />
         <Route path="/profil" element={<Profile />} />
+        <Route path="/profil/ganti-password" element={<ChangePassword />} />
         <Route path="/kegiatan/tambah" element={<AddActivity />} />
         <Route path="/kegiatan/:uuid" element={<DetailActivity />} />
         <Route path="/kegiatan/:uuid/edit" element={<EditActivity />} />
@@ -69,7 +72,8 @@ const App = () => {
         <Route path="/administrator/fieldwork/:fieldworkType" element={<FieldworkIndex />} />
         <Route path="/administrator/fieldwork/:fieldworkType/create" element={<FieldworkCreate />} />
         <Route path="/administrator/fieldwork/:fieldworkType/:fieldworkId/edit" element={<FieldworkEdit />} />
-        <Route path="/administrator/fieldwork/:fieldworkType/:fieldworkId/show" element={<FieldworkDetail />} />
+        <Route path="/administrator/fieldwork/:fieldworkType/:fieldworkId/detail" element={<FieldworkDetail />} />
+        <Route path="/administrator/group/:uuid/detail" element={<AdminGroupDetail />} />
 
         {/* <Route path="/administrator/magang" element={<Magang />} /> */}
         {/* <Route path="/administrator/magang/create" element={<MagangCreate />} /> */}

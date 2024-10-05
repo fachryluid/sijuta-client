@@ -1,6 +1,6 @@
-import { Field } from "formik";
+import { ErrorMessage, Field } from "formik";
 
-export default function FormInput({ label, name, placeholder, type, maxLength }) {
+export default function FormInput({ label, name, type, autocomplete, ...props }) {
   return (
     <>
       <Field name={name}>
@@ -14,27 +14,22 @@ export default function FormInput({ label, name, placeholder, type, maxLength })
             </label>
             {type === 'textarea' ?
               <textarea
-                id={name}
+                {...props}
                 {...field}
-                placeholder={placeholder}
-                maxLength={maxLength}
-                className="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0 focus:border-main-0 peer"
+                id={name}
+                className={`block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0 focus:border-main-0 peer ${form.errors[name] && form.touched[name] ? 'border-red-500 focus:border-red-500' : ''}`}
               />
               :
               <input
+                {...props}
                 {...field}
                 id={name}
                 type={type ?? "text"}
-                placeholder={placeholder}
-                maxLength={maxLength}
                 className={`block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0 focus:border-main-0 peer ${form.errors[name] && form.touched[name] ? 'border-red-500 focus:border-red-500' : ''}`}
+                autoComplete={autocomplete ?? ""}
               />
             }
-            {form.errors[name] && form.touched[name] && (
-              <div className="text-red-500">
-                <small>{form.errors[name]}</small>
-              </div>
-            )}
+            <ErrorMessage name={name} component="p" className="text-red-500 text-xs mt-1" />
           </div>
         )}
       </Field>

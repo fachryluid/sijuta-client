@@ -1,7 +1,7 @@
 import { Field, ErrorMessage } from 'formik';
 import Select from 'react-select';
 
-export default function FormSelect({ label, name, placeholder, options, isSearchable }) {
+export default function FormSelect({ label, name, placeholder, options, isSearchable, ...props }) {
   const customStyles = {
     control: (provided, state) => ({
       ...provided,
@@ -44,23 +44,29 @@ export default function FormSelect({ label, name, placeholder, options, isSearch
         {label}
       </label>
       <Field name={name}>
-        {({ field, form }) => (
-          <Select
-            {...field}
-            id={name}
-            placeholder={field.value ?? placeholder}
-            options={options}
-            onChange={(option) => form.setFieldValue(name, option)}
-            onBlur={() => form.setFieldTouched(name, true)}
-            isSearchable={isSearchable ?? false}
-            styles={customStyles}
-            error={form.errors[name]}
-            menuPortalTarget={document.body}
-            menuPosition={'fixed'}
-          />
-        )}
+        {({ field, form }) => {
+          const selectedOption = options?.find(option => option.value === field.value);
+
+          return (
+            <Select
+              {...props}
+              {...field}
+              id={name}
+              value={selectedOption}
+              placeholder={field.value ?? placeholder}
+              options={options}
+              onChange={(option) => form.setFieldValue(name, option.value)}
+              onBlur={() => form.setFieldTouched(name, true)}
+              isSearchable={isSearchable ?? false}
+              styles={customStyles}
+              error={form.errors[name]}
+              menuPortalTarget={document.body}
+              menuPosition={'fixed'}
+            />
+          )
+        }}
       </Field>
-      <ErrorMessage name={name} component="div" className="text-red-500 text-sm mt-1" />
+      <ErrorMessage name={name} component="p" className="text-red-500 text-xs mt-1" />
     </div>
   );
 }

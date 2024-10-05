@@ -37,7 +37,7 @@ export default function FieldworkIndex() {
               item.groupCount,
               <Badge className="w-fit" color={item.status == FIELDWORK_STATUS.ACTIVE ? 'success' : 'failure'}>{item.status}</Badge>,
               <div className="flex space-x-2.5">
-                <Link to={`/administrator/fieldwork/${fieldworkType}/${item.uuid}/show`} className="font-bold text-main-0 hover:underline">
+                <Link to={`/administrator/fieldwork/${fieldworkType}/${item.uuid}/detail`} className="font-bold text-main-0 hover:underline">
                   Detail
                 </Link>
                 <Link to={`/administrator/fieldwork/${fieldworkType}/${item.uuid}/edit`} className="font-bold text-green-500 hover:underline">
